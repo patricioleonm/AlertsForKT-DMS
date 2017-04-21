@@ -1,0 +1,21 @@
+<dt>{$document_name}</dt>
+    <dd>
+	{i18n}An alert was triggered on the following document{/i18n}:{$document_name}<br />
+	<div style="padding-top: 5px;">
+    <i>{i18n}Comment{/i18n}:</i><br />	
+    {$message}
+	</div>
+	
+	<div>
+			<a target="_blank" href="{$url}/view.php?fDocumentId={$document_id}">
+			<span></span>{i18n}View document{/i18n}</a>
+			&nbsp;|&nbsp;			
+		
+			<a href="{$url}/notify.php?id={$notify_id}&notify_action=clear">
+			<span></span>{i18n}Clear Alert{/i18n}</a>
+			&nbsp;|&nbsp;		
+		
+			<a target="_blank" href="{$url}/action.php?kt_path_info=PatoLeon.Alerts.Action&fDocumentId={$document_id}">
+			<span></span>{i18n}View all alerts on this document{/i18n}</a>
+	</div>
+	</dd>

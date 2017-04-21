@@ -1,0 +1,105 @@
+{literal}
+<script type="text/javascript">
+
+Ext.onReady(function(){
+var date = new Ext.form.DateField({
+        allowBlank: true,
+        format: 'Y-m-d',
+        name: 'alert_date',
+        value: {/literal}{if $edit == true}'{$updateData.Date}'{else}new Date(){/if}{literal},
+        renderTo: 'alert_date'
+    });
+});
+</script>
+{/literal}
+
+    <h2>{i18n}Add an Alert on this Document{/i18n}</h2>
+	<p class='descriptiveText'>{i18n}Create an alert to receive a dashboard notification and an email when action is required on this document.{/i18n}</p>
+
+    <fieldset>
+
+        <legend>{i18n}Alert{/i18n}</legend>
+        <form action='/action.php?kt_path_info=PatoLeon.Alerts.Action' method='POST' name='update_alerts_form'>
+            <input type='hidden' name='fDocumentId' value='{$fDocumentId}' />
+            <input type='hidden' name='action' value='{$action}' />
+            <input type='hidden' name='alertID' value='{$alertID}' />
+
+            <div class='field'>
+                <label for='date_type'><b>{i18n}Alert Date{/i18n}</b><span class='required'>(Required)</span></label>
+                <span class='descriptiveText'>{i18n}Select an option{/i18n}</span>
+            </div>
+
+            <div>
+                <input type='radio' name="date_type" value="period" {if $edit == true}checked{/if}/>&nbsp;{i18n}Alert in{/i18n}&nbsp;&nbsp;
+                <input type='text' size='5' name='period' value="1" />
+                <select name='length'>
+                    <option value="days" selected>{i18n}days{/i18n}</option>
+                    <option value="weeks">{i18n}weeks{/i18n}</option>
+                    <option value="months">{i18n}months{/i18n}</option>
+                    <option value="years">{i18n}years{/i18n}</option>
+                </select>
+            </div>
+
+            <div style='padding-top: 10px;'>
+                <div style='float: left; '>
+                    <input type='radio' name="date_type" value="date" checked='true'>&nbsp;{i18n}Alert on{/i18n}&nbsp;&nbsp;
+                </div>
+                <div style='float: left; '>
+                    <div id='alert_date'></div>
+                </div>
+                <div style='clear:both'></div>
+            </div>
+
+            <div style='padding-top: 15px;'>
+
+                <label for='comment'><b>{i18n}Alert Message{/i18n}</b></label><br />
+                <span class='descriptiveText'>{i18n}Add a message for this alert{/i18n}</span><br />
+                <textarea name='comment' cols='100' rows='5'>{if $edit == true}{$updateData.Message}{else}{i18n}Please review this document.{/i18n}{/if}</textarea>
+            </div>
+
+            <br>
+            <hr>
+            <input type="submit" name="save" value="{i18n}Save{/i18n}" onclick="" />&nbsp;
+            <input type="button" onclick="javascript: window.location = '/view.php?fDocumentId={$fDocumentId}';" name="cancel" value="{i18n}Cancel{/i18n}" />
+        </form>
+    </fieldset>
+
+{if $alerts != null }
+	<div id='list' style='padding-top: 15px;'>
+		<h2>{i18n}Existing Alerts{/i18n}</h2>
+		<p class='descriptiveText'>{i18n}A list of existing alerts for this document{/i18n}</p>
+	</div>
+	<br />
+	<table class="kt_collection" cellspacing='0px'>
+		<thead>
+			<th><b>{i18n}Date{/i18n}</b></th>
+			<th><b>{i18n}Alert in{/i18n}</b></th>
+			<th><b>{i18n}Notify{/i18n}</b></th>
+			<th><b>{i18n}Message{/i18n}</b></th>
+			<th><b>{i18n}Edit{/i18n}</b></th>
+			<th><b>{i18n}Delete{/i18n}</b></th>
+		</thead>
+		{foreach from=$alerts item=alert}
+		<tbody>
+				<tr class = "even ">
+					<td>{$alert.Date}</td>
+					<td>{if $alert.days == 0 }
+								{i18n}Today{/i18n}
+							{elseif $alert.days > 0}
+								{$alert.days} {i18n}days{/i18n}
+							{elseif $alert.days}
+								{i18n}Done{/i18n}
+							{/if}</td>
+					<td>{if $alert.Sent == 0 }<a href="/action.php?kt_path_info=PatoLeon.Alerts.Action&fDocumentId={$fDocumentId}&action=editnotifications&alertID={$alert.AlertID|truncate:50:"..."}">{$alert.Users}</a>{else}{$alert.Users}{/if}</td>
+					<td>{$alert.Message|truncate:40:"..."}</td>
+					<td>{if $alert.Sent == 0 }<a href='/action.php?kt_path_info=PatoLeon.Alerts.Action&fDocumentId={$fDocumentId}&action=edit&alertID={$alert.AlertID}' class='ktAction ktEdit'></a>{else}<span class="ktAction ktDenied">No</span>{/if}</td>
+					<td>{if $alert.Sent == 0 }<a href='/action.php?kt_path_info=PatoLeon.Alerts.Action&fDocumentId={$fDocumentId}&action=delete&alertID={$alert.AlertID}' class='ktAction ktDelete' onclick=""></a>{else}<span class="ktAction ktDenied">No</span>{/if}</td>
+				</tr>
+		</tbody>
+		{/foreach}
+	</table>
+{else}
+	<p>
+		<h2>{i18n}No alerts have been configured for this document.{/i18n}</h2>
+	</p>
+{/if}
